@@ -15,17 +15,31 @@
 {
     NSString* writeKeyPreferenceName;
     NSString* writeKeyPListName;
-
+    // Note: Overwrite to set keys based on app id's
     //Get app credentials from config.xml or the info.plist if they can't be found
-    #ifdef DEBUG
-        [SEGAnalytics debug:YES];
-        writeKeyPreferenceName = @"analytics_debug_write_key";
-        writeKeyPListName = @"AnalyticsDebugWriteKey";
-    #else
-        [SEGAnalytics debug:NO];
+    // #ifdef DEBUG
+    //     [SEGAnalytics debug:YES];
+    //     writeKeyPreferenceName = @"analytics_debug_write_key";
+    //     writeKeyPListName = @"AnalyticsDebugWriteKey";
+    // #else
+    //     [SEGAnalytics debug:NO];
+    //     writeKeyPreferenceName = @"analytics_write_key";
+    //     writeKeyPListName = @"AnalyticsWriteKey";
+    // #endif
+
+    NSString* appID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
+
+    NSLog(@"[cordova-plugin-segment] appID %@", appID);
+
+    if ([appID  isEqual: @"com.shipt.groceries"]) {
+        // Prod keys
         writeKeyPreferenceName = @"analytics_write_key";
         writeKeyPListName = @"AnalyticsWriteKey";
-    #endif
+    } else {
+        // Non-Prod keys
+        writeKeyPreferenceName = @"analytics_debug_write_key";
+        writeKeyPListName = @"AnalyticsDebugWriteKey";
+    }
 
     NSString* writeKey = self.commandDelegate.settings[writeKeyPreferenceName] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:writeKeyPListName];
 
