@@ -29,14 +29,12 @@
 
     NSString* appID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
 
-    NSLog(@"[cordova-plugin-segment] appID %@", appID);
-
-    if ([appID  isEqual: @"com.shipt.groceries"]) {
-        // Prod keys
+    if ([appID rangeOfString:@"staging"].location == NSNotFound) {
+        // Prod
         writeKeyPreferenceName = @"analytics_write_key";
         writeKeyPListName = @"AnalyticsWriteKey";
     } else {
-        // Non-Prod keys
+        // Non-Prod
         writeKeyPreferenceName = @"analytics_debug_write_key";
         writeKeyPListName = @"AnalyticsDebugWriteKey";
     }
