@@ -9,8 +9,12 @@ Implements (mostly) the same API interface on `window.analytics` as [Analytics.j
 
 ##Segment Write Keys
 In config.xml, you can put the following preferences:
+For iOS
 * \<preference name="analytics_write_key" value="{Segment write key}" />
 * \<preference name="analytics_debug_write_key" value="{Segment write key}" />
+For Android
+* \<preference name="analytics_android_write_key" value="{Segment write key}" />
+* \<preference name="analytics_android_debug_write_key" value="{Segment write key}" />
 
 ##iOS Integrations Setup
 This plugin uses cordova-plugin-cocoapods-support to automatically bundle in the Segment iOS SDK through CocaoPods.
