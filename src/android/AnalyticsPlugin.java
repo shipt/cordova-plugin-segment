@@ -39,7 +39,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
             logLevel = LogLevel.VERBOSE;
         } else {
             writeKeyPreferenceName = "analytics_write_key";
-            logLevel = LogLevel.NONE;
+            logLevel = LogLevel.VERBOSE;
         }
 
         writeKey = this.preferences.getString(writeKeyPreferenceName, null);
