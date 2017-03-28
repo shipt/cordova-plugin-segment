@@ -34,13 +34,15 @@ public class AnalyticsPlugin extends CordovaPlugin {
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
-        if(this.cordova.getActivity().getPackageName().contains("staging")) {
-            writeKeyPreferenceName = "analytics_android_debug_write_key";
+        if(BuildConfig.DEBUG) {
+            writeKeyPreferenceName = "analytics_debug_write_key";
             logLevel = LogLevel.VERBOSE;
         } else {
-            writeKeyPreferenceName = "analytics_android_write_key";
+            writeKeyPreferenceName = "analytics_write_key";
             logLevel = LogLevel.NONE;
         }
+
+        writeKey = this.preferences.getString(writeKeyPreferenceName, null);
 
         if (writeKey == null || "".equals(writeKey)) {
             analytics = null;
