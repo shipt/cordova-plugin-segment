@@ -31,11 +31,11 @@
 
     if ([appID rangeOfString:@"staging"].location == NSNotFound) {
         // Prod
-        writeKeyPreferenceName = @"analytics_write_key";
+        writeKeyPreferenceName = @"analytics_ios_write_key";
         writeKeyPListName = @"AnalyticsWriteKey";
     } else {
         // Non-Prod
-        writeKeyPreferenceName = @"analytics_debug_write_key";
+        writeKeyPreferenceName = @"analytics_ios_debug_write_key";
         writeKeyPListName = @"AnalyticsDebugWriteKey";
     }
 

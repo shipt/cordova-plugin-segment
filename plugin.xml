@@ -25,8 +25,8 @@
                 <param name="android-package" value="com.segment.analytics.cordova.AnalyticsPlugin"/>
                 <param name="onload" value="true"/>
             </feature>
-            <preference name="analytics_write_key"/>
-            <preference name="analytics_debug_write_key"/>
+            <preference name="analytics_android_write_key"/>
+            <preference name="analytics_android_debug_write_key"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -62,8 +62,8 @@
                 <param name="ios-package" value="AnalyticsPlugin" />
                 <param name="onload" value="true"/>
             </feature>
-            <preference name="analytics_write_key"/>
-            <preference name="analytics_debug_write_key"/>
+            <preference name="analytics_ios_write_key"/>
+            <preference name="analytics_ios_debug_write_key"/>
         </config-file>
 
         <header-file src="src/ios/AnalyticsPlugin.h" />

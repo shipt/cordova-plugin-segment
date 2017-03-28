@@ -34,12 +34,13 @@ public class AnalyticsPlugin extends CordovaPlugin {
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
+        // BuildConfig.APPLICATION_ID returns org.apache.cordova instead com.shipt.shopper-staging or com.shipt.shopper or com.shipt.shopper-enterprise due to which I could not able to set keys based on string search. Please see other possible ways to get the APPLICATION_ID.
         if(BuildConfig.DEBUG) {
-            writeKeyPreferenceName = "analytics_debug_write_key";
+            writeKeyPreferenceName = "analytics_android_debug_write_key";
             logLevel = LogLevel.VERBOSE;
         } else {
-            writeKeyPreferenceName = "analytics_write_key";
-            logLevel = LogLevel.VERBOSE;
+            writeKeyPreferenceName = "analytics_android_write_key";
+            logLevel = LogLevel.NONE;
         }
 
         writeKey = this.preferences.getString(writeKeyPreferenceName, null);
