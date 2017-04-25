@@ -57,7 +57,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
                 ).logLevel(logLevel).build();
                 Log.e(TAG, "Analytics set to: " + analytics);
 
-                Analytics.setSingletonInstance(analytics);
+                //Analytics.setSingletonInstance(analytics);
             } catch (Exception e) {
                 Log.e(TAG, "Segment Error " + e.getMessage());
                 Log.e(TAG, "Segment Analytics already set " + writeKey);
