@@ -49,21 +49,14 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
-            try {
-                Log.e(TAG, "Initializing Segment Analytics " + writeKey);
-                analytics = new Analytics.Builder(
-                    cordova.getActivity().getApplicationContext(),
-                    writeKey
-                ).logLevel(logLevel).build();
-                Log.e(TAG, "Analytics set to: " + analytics);
-
-                //Analytics.setSingletonInstance(analytics);
-            } catch (Exception e) {
-                Log.e(TAG, "Segment Error " + e.getMessage());
-                Log.e(TAG, "Segment Analytics already set " + writeKey);
-                Log.e(TAG, "Analytics alreadt set to: " + analytics);
-            }
+            Log.e(TAG, "Initializing Segment Analytics " + writeKey);
+            analytics = new Analytics.Builder(
+                cordova.getActivity().getApplicationContext(),
+                writeKey
+            ).logLevel(logLevel).build();
+            Log.e(TAG, "Analytics set to: " + analytics);
             
+            Analytics.setSingletonInstance(analytics);
         }
     }
 
