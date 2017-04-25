@@ -49,6 +49,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
+            analytics = null;
             Log.e(TAG, "Iniitializing Segment Analytics " + writeKey);
             analytics = new Analytics.Builder(
                 cordova.getActivity().getApplicationContext(),
