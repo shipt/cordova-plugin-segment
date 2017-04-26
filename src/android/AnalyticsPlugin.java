@@ -75,6 +75,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
     
     @Override public void onStop() {
         Log.e(TAG, "onStop called");
+        analytics.shutdown();
     }
 
     @Override protected void pluginInitialize() {
