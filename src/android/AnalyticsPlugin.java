@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 public class AnalyticsPlugin extends CordovaPlugin {
 
@@ -32,7 +33,8 @@ public class AnalyticsPlugin extends CordovaPlugin {
     private Analytics analytics;
     private String writeKey;
     
-    @Override public void onStart() {
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
@@ -69,8 +71,6 @@ public class AnalyticsPlugin extends CordovaPlugin {
     
     @Override public void onDestroy() {
         Log.e(TAG, "onDestroy called");
-        Activity activity = this.cordova.getActivity();
-        activity.finish();
     }
     
     @Override public void onStop() {
