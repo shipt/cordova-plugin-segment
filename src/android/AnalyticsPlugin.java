@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.os.Process;
+
 public class AnalyticsPlugin extends CordovaPlugin {
 
     private static final String TAG = "AnalyticsPlugin";
@@ -65,8 +67,10 @@ public class AnalyticsPlugin extends CordovaPlugin {
         Log.e(TAG, "onResume called");
     }
     
-    @Override public void onDestroy() {
-        Log.e(TAG, "onDestroy called");
+    @Override
+    public void onDestroy() {
+       int pid = android.os.Process.myPid();
+       android.os.Process.killProcess(pid);
     }
     
     @Override public void onStop() {
