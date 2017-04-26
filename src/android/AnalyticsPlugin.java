@@ -51,7 +51,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
         } else {
             Log.e(TAG, "Analytics: " + analytics);
             Log.e(TAG, "Initializing Segment Analytics " + writeKey);
-            if (!analytics) {
+            if (analytics == null) {
                 analytics = new Analytics.Builder(
                     cordova.getActivity().getApplicationContext(),
                     writeKey
