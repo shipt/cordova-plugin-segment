@@ -51,30 +51,25 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
-            Log.e(TAG, "Analytics: " + analytics);
-            Log.e(TAG, "Initializing Segment Analytics " + writeKey);
             analytics = new Analytics.Builder(
                 cordova.getActivity().getApplicationContext(),
                 writeKey
             ).logLevel(logLevel).build();
-            Log.e(TAG, "Analytics set to: " + analytics);
 
             Analytics.setSingletonInstance(analytics);
         }
     }
     
-    @Override public void onResume(boolean multitasking) {
-        Log.e(TAG, "onResume called");
-    }
-    
+    /** On android, when closing the app via the back button, a relaunch tries to reinitialize the segment instance. 
+    *   This causes a crash because the segment instance is already initialized as a singleton. So. We need to kill
+    *   the current process on destroy in order to allow the app to relaunch and initialize segment successfully.
+    *   
+    *  ... fucking android
+    **/
     @Override
     public void onDestroy() {
        int pid = android.os.Process.myPid();
        android.os.Process.killProcess(pid);
-    }
-    
-    @Override public void onStop() {
-        Log.e(TAG, "onStop called");
     }
 
     @Override
