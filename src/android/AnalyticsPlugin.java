@@ -24,17 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
-import android.os.Bundle;
-
 public class AnalyticsPlugin extends CordovaPlugin {
 
     private static final String TAG = "AnalyticsPlugin";
     private Analytics analytics;
     private String writeKey;
     
-    @Override public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @Override protected void pluginInitialize() {
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
