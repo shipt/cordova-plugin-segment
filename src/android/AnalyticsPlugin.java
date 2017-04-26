@@ -77,10 +77,6 @@ public class AnalyticsPlugin extends CordovaPlugin {
         Log.e(TAG, "onStop called");
     }
 
-    @Override protected void pluginInitialize() {
-        Log.e(TAG, "pluginInitialize called");
-    }
-
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (analytics == null) {
