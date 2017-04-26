@@ -36,36 +36,29 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
         // BuildConfig.APPLICATION_ID returns org.apache.cordova instead com.shipt.shopper-staging or com.shipt.shopper or com.shipt.shopper-enterprise due to which I could not able to set keys based on string search. Please see other possible ways to get the APPLICATION_ID.
         if(BuildConfig.DEBUG) {
-//             writeKeyPreferenceName = "analytics_debug_write_key";
+            writeKeyPreferenceName = "analytics_android_debug_write_key";
             logLevel = LogLevel.VERBOSE;
         } else {
-//             writeKeyPreferenceName = "analytics_android_write_key";
+            writeKeyPreferenceName = "analytics_android_write_key";
             logLevel = LogLevel.NONE;
         }
-        
-        analytics = Analytics.with(cordova.getActivity().getApplicationContext());
 
-//         writeKey = this.preferences.getString(writeKeyPreferenceName, null);
+        writeKey = this.preferences.getString(writeKeyPreferenceName, null);
 
-//         if (writeKey == null || "".equals(writeKey)) {
-//             analytics = null;
-//             Log.e(TAG, "Invalid write key: " + writeKey);
-//         } else {
-//             Log.e(TAG, "Analytics: " + analytics);
-//             Log.e(TAG, "Initializing Segment Analytics " + writeKey);
-// //             analytics = Analytics.with(cordova.getActivity().getApplicationContext());
-//             if ( == null) {
-//                 analytics = new Analytics.Builder(
-//                     cordova.getActivity().getApplicationContext(),
-//                     writeKey
-//                 ).logLevel(logLevel).build();
-//                 Log.e(TAG, "Analytics set to: " + analytics);
+        if (writeKey == null || "".equals(writeKey)) {
+            analytics = null;
+            Log.e(TAG, "Invalid write key: " + writeKey);
+        } else {
+            Log.e(TAG, "Analytics: " + analytics);
+            Log.e(TAG, "Initializing Segment Analytics " + writeKey);
+            analytics = new Analytics.Builder(
+                cordova.getActivity().getApplicationContext(),
+                writeKey
+            ).logLevel(logLevel).build();
+            Log.e(TAG, "Analytics set to: " + analytics);
 
-//                 Analytics.setSingletonInstance(analytics);
-//             } else {
-//                 Log.e(TAG, "Analytics already set to: " + analytics);
-//             }
-//         }
+            Analytics.setSingletonInstance(analytics);
+        }
     }
     
     @Override public void onResume(boolean multitasking) {
@@ -74,6 +67,8 @@ public class AnalyticsPlugin extends CordovaPlugin {
     
     @Override public void onDestroy() {
         Log.e(TAG, "onDestroy called");
+        Activity activity = this.cordova.getActivity();
+        activity.finish();
     }
     
     @Override public void onStop() {
