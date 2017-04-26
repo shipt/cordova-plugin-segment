@@ -29,8 +29,8 @@ public class AnalyticsPlugin extends CordovaPlugin {
     private static final String TAG = "AnalyticsPlugin";
     private Analytics analytics;
     private String writeKey;
-
-    @Override protected void pluginInitialize() {
+    
+    @Override public void onStart() {
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
@@ -63,6 +63,22 @@ public class AnalyticsPlugin extends CordovaPlugin {
                 Log.e(TAG, "Analytics already set to: " + analytics);
             }
         }
+    }
+    
+    @Override public void onResume() {
+        Log.e(TAG, "onResume called");
+    }
+    
+    @Override public void onDestroy() {
+        Log.e(TAG, "onDestroy called");
+    }
+    
+    @Override public void onStop() {
+        Log.e(TAG, "onStop called");
+    }
+
+    @Override protected void pluginInitialize() {
+        Log.e(TAG, "pluginInitialize called");
     }
 
     @Override
