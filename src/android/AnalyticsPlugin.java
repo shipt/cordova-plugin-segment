@@ -65,7 +65,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
         }
     }
     
-    @Override public void onResume() {
+    @Override public void onResume(boolean multitasking) {
         Log.e(TAG, "onResume called");
     }
     
