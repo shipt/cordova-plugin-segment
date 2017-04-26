@@ -31,6 +31,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
     private String writeKey;
 
     @Override protected void pluginInitialize() {
+        reset();
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
