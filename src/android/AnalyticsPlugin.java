@@ -31,7 +31,6 @@ public class AnalyticsPlugin extends CordovaPlugin {
     private String writeKey;
 
     @Override protected void pluginInitialize() {
-        reset();
         String writeKeyPreferenceName;
         LogLevel logLevel;
 
@@ -50,14 +49,19 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
+            Log.e(TAG, "Analytics: " + analytics);
             Log.e(TAG, "Initializing Segment Analytics " + writeKey);
-            analytics = new Analytics.Builder(
-                cordova.getActivity().getApplicationContext(),
-                writeKey
-            ).logLevel(logLevel).build();
-            Log.e(TAG, "Analytics set to: " + analytics);
-            
-            Analytics.setSingletonInstance(analytics);
+            if (!analytics) {
+                analytics = new Analytics.Builder(
+                    cordova.getActivity().getApplicationContext(),
+                    writeKey
+                ).logLevel(logLevel).build();
+                Log.e(TAG, "Analytics set to: " + analytics);
+
+                Analytics.setSingletonInstance(analytics);
+            } else {
+                Log.e(TAG, "Analytics already set to: " + analytics);
+            }
         }
     }
 
