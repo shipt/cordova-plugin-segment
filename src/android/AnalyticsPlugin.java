@@ -31,7 +31,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
     private static final String TAG = "AnalyticsPlugin";
     private Analytics analytics;
     private String writeKey;
-    
+
     @Override protected void pluginInitialize() {
         String writeKeyPreferenceName;
         LogLevel logLevel;
@@ -51,19 +51,22 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
+            // trackApplicationLifecycleEvents() -> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
             analytics = new Analytics.Builder(
                 cordova.getActivity().getApplicationContext(),
                 writeKey
-            ).logLevel(logLevel).build();
+            ).logLevel(logLevel)
+            .trackApplicationLifecycleEvents()
+            .build();
 
             Analytics.setSingletonInstance(analytics);
         }
     }
-    
-    /** On android, when closing the app via the back button, a relaunch tries to reinitialize the segment instance. 
+
+    /** On android, when closing the app via the back button, a relaunch tries to reinitialize the segment instance.
     *   This causes a crash because the segment instance is already initialized as a singleton. So. We need to kill
     *   the current process on destroy in order to allow the app to relaunch and initialize segment successfully.
-    *   
+    *
     *  ... fucking android
     **/
     @Override
