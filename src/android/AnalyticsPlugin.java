@@ -57,6 +57,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
                 writeKey
             )
             .logLevel(logLevel)
+            .collectDeviceId(true)
             .trackApplicationLifecycleEvents()
             .build();
 
