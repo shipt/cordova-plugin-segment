@@ -57,7 +57,6 @@ public class AnalyticsPlugin extends CordovaPlugin {
                 writeKey
             )
             .logLevel(logLevel)
-            .use(GoogleAnalyticsIntegration.FACTORY)
             .trackApplicationLifecycleEvents()
             .build();
 

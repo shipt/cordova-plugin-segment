@@ -47,9 +47,10 @@
             <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
         </config-file>
 
-        <framework src="com.segment.analytics.android:analytics:4+"/>
+        <!-- <framework src="com.segment.analytics.android:analytics:4+"/> -->
+        <framework src="segment.gradle" custom="true" type="gradleReference" />
         <!-- Automatically tracking lifecycle events https://segment.com/docs/sources/mobile/android/#packaging-device-based-integration-sdks -->
-        <framework src="com.segment.analytics.android.integrations:google-analytics:+" transitive="true"/>
+        <framework src="com.segment.analytics.android.integrations:google-analytics:+"/>
 
         <source-file src="src/android/AnalyticsPlugin.java" target-dir="src/com/segment/analytics/cordova"/>
     </platform>
