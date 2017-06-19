@@ -47,7 +47,7 @@
             <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
         </config-file>
 
-        <framework src="com.segment.analytics.android:analytics:4.2.6"/>
+        <framework src="com.segment.analytics.android:analytics:4.3.0-RC1"/>
 
         <source-file src="src/android/AnalyticsPlugin.java" target-dir="src/com/segment/analytics/cordova"/>
     </platform>
@@ -68,7 +68,7 @@
         <source-file src="src/ios/AnalyticsPlugin.m" />
         <pods-config ios-min-version="8.0" use-frameworks="true">
         </pods-config>
-        <pod id="Analytics" version="3.5.5" />
+        <pod id="Analytics" version="3.6.1" />
         <framework src="AdSupport.framework" />
     </platform>
 
