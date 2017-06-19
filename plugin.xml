@@ -70,7 +70,6 @@
         </pods-config>
         <pod id="Analytics" version="3.5.5" />
         <framework src="AdSupport.framework" />
-        <framework src="iAd.framework" />
     </platform>
 
 </plugin>
