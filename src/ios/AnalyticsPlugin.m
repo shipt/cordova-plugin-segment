@@ -29,13 +29,21 @@
 
     NSString* appID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
 
-    if ([appID rangeOfString:@"staging"].location == NSNotFound) {
-        // Prod
-        writeKeyPreferenceName = @"analytics_ios_write_key";
+    if ([appID isEqualToString:@"com.shipt.groceries"]) {
+        // Shipt Production
+        writeKeyPreferenceName = @"shipt_analytics_ios_write_key";
         writeKeyPListName = @"AnalyticsWriteKey";
-    } else {
-        // Non-Prod
-        writeKeyPreferenceName = @"analytics_ios_debug_write_key";
+    } else if ([appID isEqualToString:@"com.shipt.groceries-staging"]) {
+        // Shipt Staging
+        writeKeyPreferenceName = @"shipt_analytics_ios_debug_write_key";
+        writeKeyPListName = @"AnalyticsDebugWriteKey";
+    } else if ([appID isEqualToString:@"com.shipt.meijer"]) {
+        // Meijer Prodiction
+        writeKeyPreferenceName = @"meijer_analytics_ios_debug_write_key";
+        writeKeyPListName = @"AnalyticsWriteKey";
+    } else if ([appID isEqualToString:@"com.shipt.meijerstaging"]) {
+        // Meijer Staging
+        writeKeyPreferenceName = @"meijer_analytics_ios_debug_write_key";
         writeKeyPListName = @"AnalyticsDebugWriteKey";
     }
 
