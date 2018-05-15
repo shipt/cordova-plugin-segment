@@ -35,14 +35,23 @@ public class AnalyticsPlugin extends CordovaPlugin {
     @Override protected void pluginInitialize() {
         String writeKeyPreferenceName;
         LogLevel logLevel;
+        String packageName = this.cordova.getActivity().getPackageName();
 
-        // BuildConfig.APPLICATION_ID returns org.apache.cordova instead com.shipt.shopper-staging or com.shipt.shopper or com.shipt.shopper-enterprise due to which I could not able to set keys based on string search. Please see other possible ways to get the APPLICATION_ID.
-        if(BuildConfig.DEBUG) {
-            writeKeyPreferenceName = "analytics_android_debug_write_key";
+        if (packageName.equals("com.shipt.groceries_staging")) {
+            writeKeyPreferenceName = "shipt_analytics_android_debug_write_key";
             logLevel = LogLevel.VERBOSE;
-        } else {
-            writeKeyPreferenceName = "analytics_android_write_key";
+        } else if (packageName.equals("com.shipt.groceries")) {
+            writeKeyPreferenceName = "shipt_analytics_android_write_key";
             logLevel = LogLevel.NONE;
+        }else if (packageName.equals("com.shipt.meijerstaging")) {
+            writeKeyPreferenceName = "meijer_analytics_android_debug_write_key";
+            logLevel = LogLevel.VERBOSE;
+        } else if (packageName.equals("com.shipt.meijer")) {
+            writeKeyPreferenceName = "meijer_analytics_android_write_key";
+            logLevel = LogLevel.NONE;
+        } else {
+            writeKeyPreferenceName = "";
+            logLevel = logLevel = LogLevel.VERBOSE;
         }
 
         writeKey = this.preferences.getString(writeKeyPreferenceName, null);
