@@ -39,7 +39,7 @@
         writeKeyPListName = @"AnalyticsDebugWriteKey";
     } else if ([appID isEqualToString:@"com.shipt.meijer"]) {
         // Meijer Prodiction
-        writeKeyPreferenceName = @"meijer_analytics_ios_debug_write_key";
+        writeKeyPreferenceName = @"meijer_analytics_ios_write_key";
         writeKeyPListName = @"AnalyticsWriteKey";
     } else if ([appID isEqualToString:@"com.shipt.meijerstaging"]) {
         // Meijer Staging
