@@ -52,8 +52,6 @@
         <source-file src="src/android/AnalyticsPlugin.java" target-dir="src/com/segment/analytics/cordova"/>
     </platform>
 
-    <dependency id="cordova-plugin-cocoapod-support" />
-
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="AnalyticsPlugin">
