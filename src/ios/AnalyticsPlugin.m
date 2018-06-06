@@ -45,7 +45,16 @@
         // Meijer Staging
         writeKeyPreferenceName = @"meijer_analytics_ios_debug_write_key";
         writeKeyPListName = @"AnalyticsDebugWriteKey";
+    } else if ([appID isEqualToString:@"com.shipt.shopper"]) {
+        // Shopper Production
+        writeKeyPreferenceName = @"shopper_analytics_ios_write_key";
+        writeKeyPListName = @"AnalyticsDebugWriteKey";
+    } else if ([appID isEqualToString:@"com.shipt.shopper-staging"]) {
+        // Shopper Staging
+        writeKeyPreferenceName = @"shopper_analytics_ios_debug_write_key";
+        writeKeyPListName = @"AnalyticsDebugWriteKey";
     }
+
 
     NSString* writeKey = self.commandDelegate.settings[writeKeyPreferenceName] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:writeKeyPListName];
 

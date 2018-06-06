@@ -49,6 +49,15 @@ public class AnalyticsPlugin extends CordovaPlugin {
         } else if (packageName.equals("com.shipt.meijer")) {
             writeKeyPreferenceName = "meijer_analytics_android_write_key";
             logLevel = LogLevel.NONE;
+        } else if (packageName.equals("com.shipt.shopper_staging")) {
+            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
+            logLevel = LogLevel.VERBOSE;
+        } else if (packageName.equals("com.shipt.shopper-staging")) {
+            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
+            logLevel = LogLevel.VERBOSE;
+        } else if (packageName.equals("com.shipt.shopper")) {
+            writeKeyPreferenceName = "shopper_analytics_android_write_key";
+            logLevel = LogLevel.NONE;
         } else {
             writeKeyPreferenceName = "";
             logLevel = logLevel = LogLevel.VERBOSE;
