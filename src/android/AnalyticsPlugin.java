@@ -69,7 +69,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
-            // trackApplicationLifecycleEvents() -> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
+            //trackApplicationLifecycleEvents() //-> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
 
             // trackApplicationLifecycleEvents - is not getting fired due to ` segment` initializing is getting done on onActivityStarted instead on onActivityCreated. Where segment logic of `trackApplicationLifecycleEvents` is handled with in `onActivityCreated` https://github.com/segmentio/analytics-android/blob/master/analytics/src/main/java/com/segment/analytics/Analytics.java#L291
 
@@ -88,6 +88,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
             )
             .logLevel(logLevel)
             .collectDeviceId(true)
+            .trackApplicationLifecycleEvents()
             .build();
 
             Analytics.setSingletonInstance(analytics);
