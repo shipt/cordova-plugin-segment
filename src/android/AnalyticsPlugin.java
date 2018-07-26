@@ -23,75 +23,46 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import android.os.Process;
 
 public class AnalyticsPlugin extends CordovaPlugin {
 
     private static final String TAG = "AnalyticsPlugin";
-    private Analytics analytics;
-    private String writeKey;
+    private static Analytics analytics;
 
     @Override protected void pluginInitialize() {
-        String writeKeyPreferenceName;
-        LogLevel logLevel;
-        String packageName = this.cordova.getActivity().getPackageName();
-
-        if (packageName.equals("com.shipt.groceries_staging")) {
-            writeKeyPreferenceName = "shipt_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.groceries")) {
-            writeKeyPreferenceName = "shipt_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        }else if (packageName.equals("com.shipt.meijerstaging")) {
-            writeKeyPreferenceName = "meijer_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.meijer")) {
-            writeKeyPreferenceName = "meijer_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        } else if (packageName.equals("com.shipt.shopper_staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper-staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper")) {
-            writeKeyPreferenceName = "shopper_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        } else {
-            writeKeyPreferenceName = "";
-            logLevel = logLevel = LogLevel.VERBOSE;
+        if (AnalyticsPlugin.analytics != null) {
+            return;
         }
+        final String packageName = this.cordova.getActivity().getPackageName();
+        final String writeKeyPreferenceName = getPreferenceName(packageName);
+        final LogLevel logLevel = this._getLogLevel(packageName);
+        final AnalyticsPlugin plugin = this;
+        final String writeKey = this.preferences.getString(writeKeyPreferenceName, null);
 
-        writeKey = this.preferences.getString(writeKeyPreferenceName, null);
 
         if (writeKey == null || "".equals(writeKey)) {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
         } else {
-            //trackApplicationLifecycleEvents() //-> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
-
-            // trackApplicationLifecycleEvents - is not getting fired due to ` segment` initializing is getting done on onActivityStarted instead on onActivityCreated. Where segment logic of `trackApplicationLifecycleEvents` is handled with in `onActivityCreated` https://github.com/segmentio/analytics-android/blob/master/analytics/src/main/java/com/segment/analytics/Analytics.java#L291
-
-            // analytics = new Analytics.Builder(
-            //     cordova.getActivity().getApplicationContext(),
-            //     writeKey
-            // )
-            // .logLevel(logLevel)
-            // .collectDeviceId(true)
-            // .trackApplicationLifecycleEvents()
-            // .build();
-
-            analytics = new Analytics.Builder(
-                cordova.getActivity().getApplicationContext(),
-                writeKey
-            )
-            .logLevel(logLevel)
-            .collectDeviceId(true)
-            .trackApplicationLifecycleEvents()
-            .build();
-
-            Analytics.setSingletonInstance(analytics);
+            Future<Analytics> future = cordova.getThreadPool().submit(new Callable<Analytics>() {
+                @Override
+                public Analytics call() throws Exception {
+                    return plugin._getAnalyticsInstance(writeKey, logLevel);
+                }
+            });
+            try {
+                AnalyticsPlugin.analytics = future.get();
+                Analytics.setSingletonInstance(AnalyticsPlugin.analytics);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "interrupted error");
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                Log.e(TAG, "exectution error");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -298,5 +269,54 @@ public class AnalyticsPlugin extends CordovaPlugin {
     public static String optArgString(JSONArray args, int index)
     {
         return args.isNull(index) ? null :args.optString(index);
+    }
+
+    private LogLevel _getLogLevel() {
+        return packageName.contains("staging") ? LogLevel.VERBOSE : LogLevel.NONE;
+    }
+
+    private String _getPreferenceName(String packageName) {
+        switch(packageName) {
+            case "com.shipt.groceries_staging":
+                return "shipt_analytics_android_debug_write_key";
+            case "com.shipt.groceries":
+                return "shipt_analytics_android_write_key";
+            case "com.shipt.meijerstaging":
+                return "meijer_analytics_android_debug_write_key";
+            case "com.shipt.meijer":
+                return "meijer_analytics_android_write_key";
+            case "com.shipt.shopper_staging":
+                return "shopper_analytics_android_debug_write_key";
+            case "com.shipt.shopper-staging":
+                return "shopper_analytics_android_debug_write_key";
+            case "com.shipt.shopper":
+                return "shopper_analytics_android_write_key";
+            default:
+                return "";
+        }
+    }
+
+    private Analytics _getAnalyticsInstance(String writeKey, LogLevel logLevel) {
+            //trackApplicationLifecycleEvents() //-> Enable this to record certain application events automatically! -> 
+            // which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
+
+            // trackApplicationLifecycleEvents - is not getting fired due to ` segment` initializing is getting done on onActivityStarted instead on onActivityCreated. 
+            // Where segment logic of `trackApplicationLifecycleEvents` is handled with in `onActivityCreated` 
+            // https://github.com/segmentio/analytics-android/blob/master/analytics/src/main/java/com/segment/analytics/Analytics.java#L291
+        Analytics a;
+        if (writeKey == null || "".equals(writeKey)) {
+            a = null;
+            Log.e(TAG, "Invalid write key: " + writeKey);
+        } else {
+            a = new Analytics.Builder(
+                cordova.getActivity().getApplicationContext(),
+                writeKey
+            )
+            .logLevel(logLevel)
+            .trackApplicationLifecycleEvents()
+            .build();
+
+        }
+        return a;
     }
 }
