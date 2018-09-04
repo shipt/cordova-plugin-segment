@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-segment" version="0.0.2">
+    id="cordova-plugin-segment" version="0.2.0">
     <name>AnalyticsPlugin</name>
     <description>Cordova Plugin Segment</description>
     <license>MIT License</license>
@@ -50,6 +50,7 @@
         <framework src="com.segment.analytics.android:analytics:4.2.6"/>
 
         <source-file src="src/android/AnalyticsPlugin.java" target-dir="src/com/segment/analytics/cordova"/>
+        <source-file src="src/android/AnalyticsPluginHelper.java" target-dir="src/com/segment/analytics/cordova"/>
     </platform>
 
     <platform name="ios">

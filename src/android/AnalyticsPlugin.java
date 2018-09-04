@@ -2,15 +2,12 @@ package com.segment.analytics.cordova;
 
 import android.util.Log;
 
-import com.segment.analytics.Analytics;
-import com.segment.analytics.Analytics.LogLevel;
 import com.segment.analytics.Properties;
 import com.segment.analytics.Properties.Product;
 import com.segment.analytics.StatsSnapshot;
 import com.segment.analytics.Traits;
 import com.segment.analytics.Traits.Address;
 
-import org.apache.cordova.BuildConfig;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
@@ -24,75 +21,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.os.Process;
-
 public class AnalyticsPlugin extends CordovaPlugin {
 
     private static final String TAG = "AnalyticsPlugin";
-    private Analytics analytics;
-    private String writeKey;
+    private AnalyticsPluginHelper analyticsPluginHelper;
 
     @Override protected void pluginInitialize() {
-        String writeKeyPreferenceName;
-        LogLevel logLevel;
-        String packageName = this.cordova.getActivity().getPackageName();
-
-        if (packageName.equals("com.shipt.groceries_staging")) {
-            writeKeyPreferenceName = "shipt_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.groceries")) {
-            writeKeyPreferenceName = "shipt_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        }else if (packageName.equals("com.shipt.meijerstaging")) {
-            writeKeyPreferenceName = "meijer_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.meijer")) {
-            writeKeyPreferenceName = "meijer_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        } else if (packageName.equals("com.shipt.shopper_staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper-staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper")) {
-            writeKeyPreferenceName = "shopper_analytics_android_write_key";
-            logLevel = LogLevel.NONE;
-        } else {
-            writeKeyPreferenceName = "";
-            logLevel = logLevel = LogLevel.VERBOSE;
-        }
-
-        writeKey = this.preferences.getString(writeKeyPreferenceName, null);
-
-        if (writeKey == null || "".equals(writeKey)) {
-            analytics = null;
-            Log.e(TAG, "Invalid write key: " + writeKey);
-        } else {
-            //trackApplicationLifecycleEvents() //-> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
-
-            // trackApplicationLifecycleEvents - is not getting fired due to ` segment` initializing is getting done on onActivityStarted instead on onActivityCreated. Where segment logic of `trackApplicationLifecycleEvents` is handled with in `onActivityCreated` https://github.com/segmentio/analytics-android/blob/master/analytics/src/main/java/com/segment/analytics/Analytics.java#L291
-
-            // analytics = new Analytics.Builder(
-            //     cordova.getActivity().getApplicationContext(),
-            //     writeKey
-            // )
-            // .logLevel(logLevel)
-            // .collectDeviceId(true)
-            // .trackApplicationLifecycleEvents()
-            // .build();
-
-            analytics = new Analytics.Builder(
-                cordova.getActivity().getApplicationContext(),
-                writeKey
-            )
-            .logLevel(logLevel)
-            .collectDeviceId(true)
-            .trackApplicationLifecycleEvents()
-            .build();
-
-            Analytics.setSingletonInstance(analytics);
-        }
+        analyticsPluginHelper = new AnalyticsPluginHelper(this.preferences,
+                cordova.getContext(),
+                cordova.getActivity().getPackageName());
+        cordova.getThreadPool().execute(analyticsPluginHelper);
     }
 
     /** On android, when closing the app via the back button, a relaunch tries to reinitialize the segment instance.
@@ -109,11 +47,10 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (analytics == null) {
+        if (analyticsPluginHelper.getAnalytics() == null) {
             Log.e(TAG, "Error initializing");
             return false;
         }
-
         if ("identify".equals(action)) {
             identify(args);
             return true;
@@ -144,73 +81,89 @@ public class AnalyticsPlugin extends CordovaPlugin {
     }
 
     private void identify(JSONArray args) {
-        analytics.with(cordova.getActivity().getApplicationContext()).identify(
-            optArgString(args, 0),
-            makeTraitsFromJSON(args.optJSONObject(1)),
-            null // passing options is deprecated
-        );
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).identify(
+                    optArgString(args, 0),
+                    makeTraitsFromJSON(args.optJSONObject(1)),
+                    null // passing options is deprecated
+            );
+        });
     }
 
     private void group(JSONArray args) {
-        analytics.with(cordova.getActivity().getApplicationContext()).group(
-                optArgString(args, 0),
-                makeTraitsFromJSON(args.optJSONObject(1)),
-                null // passing options is deprecated
-        );
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).group(
+                    optArgString(args, 0),
+                    makeTraitsFromJSON(args.optJSONObject(1)),
+                    null // passing options is deprecated
+            );
+        });
     }
 
     private void track(JSONArray args) {
-        analytics.with(cordova.getActivity().getApplicationContext()).track(
-                optArgString(args, 0),
-                makePropertiesFromJSON(args.optJSONObject(1)),
-                null // passing options is deprecated
-        );
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).track(
+                    optArgString(args, 0),
+                    makePropertiesFromJSON(args.optJSONObject(1)),
+                    null // passing options is deprecated
+            );
+        });
     }
 
     private void screen(JSONArray args) {
-        analytics.with(cordova.getActivity().getApplicationContext()).screen(
-                optArgString(args, 0),
-                optArgString(args, 1),
-                makePropertiesFromJSON(args.optJSONObject(2)),
-                null // passing options is deprecated
-        );
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).screen(
+                    optArgString(args, 0),
+                    optArgString(args, 1),
+                    makePropertiesFromJSON(args.optJSONObject(2)),
+                    null // passing options is deprecated
+            );
+        });
     }
 
     private void alias(JSONArray args) {
-        analytics.with(cordova.getActivity().getApplicationContext()).alias(
-                optArgString(args, 0),
-                null // passing options is deprecated
-        );
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).alias(
+                    optArgString(args, 0),
+                    null // passing options is deprecated
+            );
+        });
     }
 
     private void reset() {
-        analytics.with(cordova.getActivity().getApplicationContext()).reset();
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).reset();
+        });
     }
 
     private void flush() {
-        analytics.with(cordova.getActivity().getApplicationContext()).flush();
+        cordova.getThreadPool().execute(() -> {
+            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).flush();
+        });
     }
 
     private void getSnapshot(CallbackContext callbackContext) {
-        StatsSnapshot snapshot = analytics.with(cordova.getActivity().getApplicationContext()).getSnapshot();
-        JSONObject snapshotJSON = new JSONObject();
+        cordova.getThreadPool().execute(() -> {
+            StatsSnapshot snapshot = analyticsPluginHelper.getAnalytics()
+                    .with(cordova.getActivity().getApplicationContext()).getSnapshot();
+            JSONObject snapshotJSON = new JSONObject();
 
-        try {
-            snapshotJSON.put("timestamp", snapshot.timestamp);
-            snapshotJSON.put("flushCount", snapshot.flushCount);
-            snapshotJSON.put("flushEventCount", snapshot.flushEventCount);
-            snapshotJSON.put("integrationOperationCount", snapshot.integrationOperationCount);
-            snapshotJSON.put("integrationOperationDuration", snapshot.integrationOperationDuration);
-            snapshotJSON.put("integrationOperationAverageDuration", snapshot.integrationOperationAverageDuration);
-            snapshotJSON.put("integrationOperationDurationByIntegration", new JSONObject(snapshot.integrationOperationDurationByIntegration));
+            try {
+                snapshotJSON.put("timestamp", snapshot.timestamp);
+                snapshotJSON.put("flushCount", snapshot.flushCount);
+                snapshotJSON.put("flushEventCount", snapshot.flushEventCount);
+                snapshotJSON.put("integrationOperationCount", snapshot.integrationOperationCount);
+                snapshotJSON.put("integrationOperationDuration", snapshot.integrationOperationDuration);
+                snapshotJSON.put("integrationOperationAverageDuration", snapshot.integrationOperationAverageDuration);
+                snapshotJSON.put("integrationOperationDurationByIntegration", new JSONObject(snapshot.integrationOperationDurationByIntegration));
 
-            PluginResult r = new PluginResult(PluginResult.Status.OK, snapshotJSON);
-            r.setKeepCallback(false);
-            callbackContext.sendPluginResult(r);
-        } catch(JSONException e) {
-            e.printStackTrace();
-            return;
-        }
+                PluginResult r = new PluginResult(PluginResult.Status.OK, snapshotJSON);
+                r.setKeepCallback(false);
+                callbackContext.sendPluginResult(r);
+            } catch(JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private Traits makeTraitsFromJSON(JSONObject json) {
