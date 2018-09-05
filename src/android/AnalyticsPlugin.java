@@ -2,6 +2,7 @@ package com.segment.analytics.cordova;
 
 import android.util.Log;
 
+import com.segment.analytics.Analytics;
 import com.segment.analytics.Properties;
 import com.segment.analytics.Properties.Product;
 import com.segment.analytics.StatsSnapshot;
@@ -47,7 +48,7 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (analyticsPluginHelper == null || analyticsPluginHelper.getAnalytics() == null) {
+        if (analyticsPluginHelper == null) {
             Log.e(TAG, "Error initializing");
             return false;
         }
@@ -80,9 +81,19 @@ public class AnalyticsPlugin extends CordovaPlugin {
         return false;
     }
 
+    private Boolean isAnalyticsSingeltonSet() {
+        if(analyticsPluginHelper.getAnalytics() == null) {
+            Log.e(TAG, "Error initializing");
+            return false;
+        }
+        return true;
+    }
+
     private void identify(JSONArray args) {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).identify(
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).identify(
                     optArgString(args, 0),
                     makeTraitsFromJSON(args.optJSONObject(1)),
                     null // passing options is deprecated
@@ -92,7 +103,9 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     private void group(JSONArray args) {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).group(
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).group(
                     optArgString(args, 0),
                     makeTraitsFromJSON(args.optJSONObject(1)),
                     null // passing options is deprecated
@@ -102,7 +115,9 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     private void track(JSONArray args) {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).track(
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).track(
                     optArgString(args, 0),
                     makePropertiesFromJSON(args.optJSONObject(1)),
                     null // passing options is deprecated
@@ -112,7 +127,9 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     private void screen(JSONArray args) {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).screen(
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).screen(
                     optArgString(args, 0),
                     optArgString(args, 1),
                     makePropertiesFromJSON(args.optJSONObject(2)),
@@ -123,7 +140,9 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     private void alias(JSONArray args) {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).alias(
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).alias(
                     optArgString(args, 0),
                     null // passing options is deprecated
             );
@@ -132,19 +151,25 @@ public class AnalyticsPlugin extends CordovaPlugin {
 
     private void reset() {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).reset();
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).reset();
         });
     }
 
     private void flush() {
         cordova.getThreadPool().execute(() -> {
-            analyticsPluginHelper.getAnalytics().with(cordova.getActivity().getApplicationContext()).flush();
+            if(!isAnalyticsSingeltonSet()) return;
+
+            Analytics.with(cordova.getActivity().getApplicationContext()).flush();
         });
     }
 
     private void getSnapshot(CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
-            StatsSnapshot snapshot = analyticsPluginHelper.getAnalytics()
+            if(!isAnalyticsSingeltonSet()) return;
+
+            StatsSnapshot snapshot = Analytics
                     .with(cordova.getActivity().getApplicationContext()).getSnapshot();
             JSONObject snapshotJSON = new JSONObject();
 
