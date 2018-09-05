@@ -8,6 +8,7 @@ import com.segment.analytics.Analytics;
 import org.apache.cordova.CordovaPreferences;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.CountDownLatch;
 
 public class AnalyticsPluginHelper implements Runnable {
 
@@ -15,8 +16,8 @@ public class AnalyticsPluginHelper implements Runnable {
     private CordovaPreferences preferences;
     private static final String TAG = "AnalyticsPlugin";
     private WeakReference<Context> contextWeakReference;
-    private Boolean isPluginError = false;
     private String packageName;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public AnalyticsPluginHelper(CordovaPreferences preferences, Context context, String packageName) {
         this.preferences = preferences;
@@ -25,9 +26,12 @@ public class AnalyticsPluginHelper implements Runnable {
     }
 
     public Analytics getAnalytics() {
-        while(analytics==null && !isPluginError) {
-//            Uncomment below line if Android ever gets java 9 support
-//            Thread.onSpinWait();
+        if(analytics==null) {
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return analytics;
     }
@@ -43,7 +47,7 @@ public class AnalyticsPluginHelper implements Runnable {
         } else if (packageName.equals("com.shipt.groceries")) {
             writeKeyPreferenceName = "shipt_analytics_android_write_key";
             logLevel = Analytics.LogLevel.NONE;
-        }else if (packageName.equals("com.shipt.meijerstaging")) {
+        } else if (packageName.equals("com.shipt.meijerstaging")) {
             writeKeyPreferenceName = "meijer_analytics_android_debug_write_key";
             logLevel = Analytics.LogLevel.VERBOSE;
         } else if (packageName.equals("com.shipt.meijer")) {
@@ -68,7 +72,6 @@ public class AnalyticsPluginHelper implements Runnable {
         if (writeKey == null || "".equals(writeKey)) {
             analytics = null;
             Log.e(TAG, "Invalid write key: " + writeKey);
-            isPluginError = true;
         } else {
             //trackApplicationLifecycleEvents() //-> Enable this to record certain application events automatically! -> which then used by Tune to map install attributions https://segment.com/docs/sources/mobile/android/quickstart/#step-2-initialize-the-client
 
@@ -94,5 +97,6 @@ public class AnalyticsPluginHelper implements Runnable {
 
             Analytics.setSingletonInstance(analytics);
         }
+        latch.countDown();
     }
 }
