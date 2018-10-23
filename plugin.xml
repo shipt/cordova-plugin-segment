@@ -2,12 +2,12 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-segment" version="0.2.0">
+    id="shipt-cordova-plugin-segment" version="1.0.0">
     <name>AnalyticsPlugin</name>
     <description>Cordova Plugin Segment</description>
     <license>MIT License</license>
     <keywords>cordova,segment,analytics</keywords>
-    <repo>https://github.com/aliatsis/cordova-plugin-segment.git</repo>
+    <repo>https://github.com/newshipt/cordova-plugin-segment.git</repo>
 
     <engines>
       <engine name="cordova" version=">=3.0.0" />

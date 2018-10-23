@@ -1,10 +1,10 @@
 {
-  "name": "cordova-plugin-segment",
-  "version": "0.2.0",
+  "name": "shipt-cordova-plugin-segment",
+  "version": "1.0.0",
   "description": "Cordova plugin for Segment Analytics",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aliatsis/cordova-plugin-segment.git"
+    "url": "git+https://github.com/newshipt/cordova-plugin-segment.git"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -13,10 +13,10 @@
     "analytics",
     "attribution"
   ],
-  "author": "Anthony Liatsis <anthony.liatsis@gmail.com>",
+  "author": "Mobile Devs",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aliatsis/cordova-plugin-segment/issues"
+    "url": "https://github.com/newshipt/cordova-plugin-segment/issues"
   },
-  "homepage": "https://github.com/aliatsis/cordova-plugin-segment#readme"
+  "homepage": "https://github.com/newshipt/cordova-plugin-segment#readme"
 }
