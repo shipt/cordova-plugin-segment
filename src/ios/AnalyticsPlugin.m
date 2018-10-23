@@ -13,50 +13,7 @@
 
 - (void)finishLaunching:(NSNotification *)notification
 {
-    NSString* writeKeyPreferenceName;
-    NSString* writeKeyPListName;
-    // Note: Overwrite to set keys based on app id's
-    //Get app credentials from config.xml or the info.plist if they can't be found
-    // #ifdef DEBUG
-    //     [SEGAnalytics debug:YES];
-    //     writeKeyPreferenceName = @"analytics_debug_write_key";
-    //     writeKeyPListName = @"AnalyticsDebugWriteKey";
-    // #else
-    //     [SEGAnalytics debug:NO];
-    //     writeKeyPreferenceName = @"analytics_write_key";
-    //     writeKeyPListName = @"AnalyticsWriteKey";
-    // #endif
-
-    NSString* appID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-
-    if ([appID isEqualToString:@"com.shipt.groceries"]) {
-        // Shipt Production
-        writeKeyPreferenceName = @"shipt_analytics_ios_write_key";
-        writeKeyPListName = @"AnalyticsWriteKey";
-    } else if ([appID isEqualToString:@"com.shipt.groceries-staging"]) {
-        // Shipt Staging
-        writeKeyPreferenceName = @"shipt_analytics_ios_debug_write_key";
-        writeKeyPListName = @"AnalyticsDebugWriteKey";
-    } else if ([appID isEqualToString:@"com.shipt.meijer"]) {
-        // Meijer Prodiction
-        writeKeyPreferenceName = @"meijer_analytics_ios_write_key";
-        writeKeyPListName = @"AnalyticsWriteKey";
-    } else if ([appID isEqualToString:@"com.shipt.meijerstaging"]) {
-        // Meijer Staging
-        writeKeyPreferenceName = @"meijer_analytics_ios_debug_write_key";
-        writeKeyPListName = @"AnalyticsDebugWriteKey";
-    } else if ([appID isEqualToString:@"com.shipt.shopper"]) {
-        // Shopper Production
-        writeKeyPreferenceName = @"shopper_analytics_ios_write_key";
-        writeKeyPListName = @"AnalyticsDebugWriteKey";
-    } else if ([appID isEqualToString:@"com.shipt.shopper-staging"]) {
-        // Shopper Staging
-        writeKeyPreferenceName = @"shopper_analytics_ios_debug_write_key";
-        writeKeyPListName = @"AnalyticsDebugWriteKey";
-    }
-
-
-    NSString* writeKey = self.commandDelegate.settings[writeKeyPreferenceName] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:writeKeyPListName];
+    NSString* writeKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"segmentAnalyticsKey"];
 
     if (writeKey.length) {
         NSString* useLocationServices = self.commandDelegate.settings[@"analytics_use_location_services"] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AnalyticsUserLocationServices"];
