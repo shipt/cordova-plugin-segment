@@ -1,6 +1,6 @@
 {
   "name": "shipt-cordova-plugin-segment",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Cordova plugin for Segment Analytics",
   "repository": {
     "type": "git",
