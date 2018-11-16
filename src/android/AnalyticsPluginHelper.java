@@ -17,12 +17,14 @@ public class AnalyticsPluginHelper implements Runnable {
     private static final String TAG = "AnalyticsPlugin";
     private WeakReference<Context> contextWeakReference;
     private String packageName;
+    private String segmentKey;
     private CountDownLatch latch = new CountDownLatch(1);
 
     public AnalyticsPluginHelper(CordovaPreferences preferences, Context context, String packageName) {
         this.preferences = preferences;
         contextWeakReference = new WeakReference<>(context);
         this.packageName = packageName;
+        this.segmentKey = context.getString(context.getResources().getIdentifier( "segmentAnalyticsKey", "string", packageName));
     }
 
     public Analytics getAnalytics() {
@@ -40,34 +42,8 @@ public class AnalyticsPluginHelper implements Runnable {
     public void run() {
         String writeKeyPreferenceName;
         Analytics.LogLevel logLevel;
-
-        if (packageName.equals("com.shipt.groceries_staging")) {
-            writeKeyPreferenceName = "shipt_analytics_android_debug_write_key";
-            logLevel = Analytics.LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.groceries")) {
-            writeKeyPreferenceName = "shipt_analytics_android_write_key";
-            logLevel = Analytics.LogLevel.NONE;
-        } else if (packageName.equals("com.shipt.meijerstaging")) {
-            writeKeyPreferenceName = "meijer_analytics_android_debug_write_key";
-            logLevel = Analytics.LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.meijer")) {
-            writeKeyPreferenceName = "meijer_analytics_android_write_key";
-            logLevel = Analytics.LogLevel.NONE;
-        } else if (packageName.equals("com.shipt.shopper_staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = Analytics.LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper-staging")) {
-            writeKeyPreferenceName = "shopper_analytics_android_debug_write_key";
-            logLevel = Analytics.LogLevel.VERBOSE;
-        } else if (packageName.equals("com.shipt.shopper")) {
-            writeKeyPreferenceName = "shopper_analytics_android_write_key";
-            logLevel = Analytics.LogLevel.NONE;
-        } else {
-            writeKeyPreferenceName = "";
-            logLevel = Analytics.LogLevel.VERBOSE;
-        }
-
-        String writeKey = preferences.getString(writeKeyPreferenceName, null);
+        logLevel = Analytics.LogLevel.VERBOSE;
+        String writeKey = segmentKey;
 
         if (writeKey == null || "".equals(writeKey)) {
             analytics = null;
